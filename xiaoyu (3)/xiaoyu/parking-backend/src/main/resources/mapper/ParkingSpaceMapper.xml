@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.pust.parking.mapper.ParkingSpaceMapper">
+
+    <resultMap id="ParkingSpaceMap" type="com.pust.parking.entity.ParkingSpace">
+        <id column="id" property="id"/>
+        <result column="space_code" property="spaceCode"/>
+        <result column="floor" property="floor"/>
+        <result column="type" property="type"/>
+        <result column="status" property="status"/>
+        <result column="remark" property="remark"/>
+    </resultMap>
+
+    <select id="listAll" resultMap="ParkingSpaceMap">
+        SELECT id, space_code, floor, type, status, remark
+        FROM parking_space
+        ORDER BY space_code ASC
+    </select>
+
+    <select id="listAvailable" resultMap="ParkingSpaceMap">
+        SELECT id, space_code, floor, type, status, remark
+        FROM parking_space
+        WHERE status = 'FREE'
+        ORDER BY space_code ASC
+    </select>
+
+    <select id="findById" parameterType="long" resultMap="ParkingSpaceMap">
+        SELECT id, space_code, floor, type, status, remark
+        FROM parking_space
+        WHERE id = #{id}
+    </select>
+
+    <insert id="insert" parameterType="com.pust.parking.entity.ParkingSpace" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO parking_space (space_code, floor, type, status, remark)
+        VALUES (#{spaceCode}, #{floor}, #{type}, #{status}, #{remark})
+    </insert>
+
+    <update id="update" parameterType="com.pust.parking.entity.ParkingSpace">
+        UPDATE parking_space
+        SET space_code = #{spaceCode},
+            floor = #{floor},
+            type = #{type},
+            status = #{status},
+            remark = #{remark}
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteById" parameterType="long">
+        DELETE FROM parking_space WHERE id = #{id}
+    </delete>
+
+</mapper>

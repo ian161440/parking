@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pust.parking.mapper.ExternalParkingLotMapper">
+
+    <resultMap id="BaseResultMap" type="com.pust.parking.entity.ExternalParkingLot">
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="address" property="address"/>
+        <result column="phone" property="phone"/>
+        <result column="distance_km" property="distanceKm"/>
+        <result column="available_spaces" property="availableSpaces"/>
+        <result column="price_per_hour" property="pricePerHour"/>
+        <result column="business_hours" property="businessHours"/>
+        <result column="parking_type" property="parkingType"/>
+        <result column="score" property="score"/>
+    </resultMap>
+
+    <select id="listAll" resultMap="BaseResultMap">
+        SELECT id, name, address, phone, distance_km, available_spaces,
+               price_per_hour, business_hours, parking_type, score
+        FROM external_parking_lot
+        ORDER BY distance_km ASC
+    </select>
+
+    <select id="findById" resultMap="BaseResultMap">
+        SELECT id, name, address, phone, distance_km, available_spaces,
+               price_per_hour, business_hours, parking_type, score
+        FROM external_parking_lot
+        WHERE id = #{id}
+    </select>
+
+</mapper>

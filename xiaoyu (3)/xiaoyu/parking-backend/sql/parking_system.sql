@@ -1,0 +1,100 @@
+CREATE DATABASE IF NOT EXISTS parking_system
+  DEFAULT CHARACTER SET utf8mb4
+  COLLATE utf8mb4_unicode_ci;
+
+USE parking_system;
+
+CREATE TABLE IF NOT EXISTS sys_user (
+  id BIGINT PRIMARY KEY AUTO_INCREMENT,
+  username VARCHAR(50) NOT NULL UNIQUE,
+  password VARCHAR(255) NOT NULL,
+  phone VARCHAR(20),
+  role VARCHAR(20) NOT NULL COMMENT 'USER or ADMIN',
+  status TINYINT NOT NULL DEFAULT 1 COMMENT '1=normal,0=disabled',
+  create_time DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  update_time DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS vehicle (
+  id BIGINT PRIMARY KEY AUTO_INCREMENT,
+  user_id BIGINT NOT NULL,
+  plate_number VARCHAR(20) NOT NULL,
+  vehicle_type VARCHAR(50),
+  is_special TINYINT NOT NULL DEFAULT 0,
+  remark VARCHAR(255),
+  create_time DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  update_time DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  CONSTRAINT fk_vehicle_user FOREIGN KEY (user_id) REFERENCES sys_user(id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS parking_space (
+  id BIGINT PRIMARY KEY AUTO_INCREMENT,
+  space_code VARCHAR(50) NOT NULL UNIQUE,
+  floor VARCHAR(20),
+  type VARCHAR(50),
+  status VARCHAR(20) NOT NULL DEFAULT 'FREE',
+  remark VARCHAR(255)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS reservation (
+  id BIGINT PRIMARY KEY AUTO_INCREMENT,
+  user_id BIGINT NOT NULL,
+  vehicle_id BIGINT NOT NULL,
+  space_id BIGINT NOT NULL,
+  start_time DATETIME NOT NULL,
+  end_time DATETIME NOT NULL,
+  status VARCHAR(20) NOT NULL DEFAULT 'PENDING',
+  create_time DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT fk_reservation_user FOREIGN KEY (user_id) REFERENCES sys_user(id),
+  CONSTRAINT fk_reservation_vehicle FOREIGN KEY (vehicle_id) REFERENCES vehicle(id),
+  CONSTRAINT fk_reservation_space FOREIGN KEY (space_id) REFERENCES parking_space(id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS announcement (
+  id BIGINT PRIMARY KEY AUTO_INCREMENT,
+  title VARCHAR(200) NOT NULL,
+  content TEXT NOT NULL,
+  is_top TINYINT NOT NULL DEFAULT 0,
+  publisher_id BIGINT,
+  create_time DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  update_time DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  CONSTRAINT fk_announcement_publisher FOREIGN KEY (publisher_id) REFERENCES sys_user(id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS violation_record (
+  id BIGINT PRIMARY KEY AUTO_INCREMENT,
+  user_id BIGINT,
+  vehicle_id BIGINT,
+  space_id BIGINT,
+  description VARCHAR(500),
+  status VARCHAR(20) NOT NULL DEFAULT 'UNPROCESSED',
+  create_time DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  handler_id BIGINT,
+  CONSTRAINT fk_violation_user FOREIGN KEY (user_id) REFERENCES sys_user(id),
+  CONSTRAINT fk_violation_vehicle FOREIGN KEY (vehicle_id) REFERENCES vehicle(id),
+  CONSTRAINT fk_violation_space FOREIGN KEY (space_id) REFERENCES parking_space(id),
+  CONSTRAINT fk_violation_handler FOREIGN KEY (handler_id) REFERENCES sys_user(id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS external_parking_lot (
+  id BIGINT PRIMARY KEY AUTO_INCREMENT,
+  name VARCHAR(200) NOT NULL,
+  address VARCHAR(300),
+  phone VARCHAR(50),
+  distance_km DECIMAL(10,3),
+  available_spaces INT,
+  price_per_hour DECIMAL(10,2),
+  parking_type VARCHAR(50),
+  business_hours VARCHAR(100),
+  score DECIMAL(5,2)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS user_preference (
+  id BIGINT PRIMARY KEY AUTO_INCREMENT,
+  user_id BIGINT NOT NULL,
+  prefer_type VARCHAR(50),
+  prefer_floor VARCHAR(20),
+  prefer_time_period VARCHAR(100),
+  rating INT,
+  CONSTRAINT fk_preference_user FOREIGN KEY (user_id) REFERENCES sys_user(id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

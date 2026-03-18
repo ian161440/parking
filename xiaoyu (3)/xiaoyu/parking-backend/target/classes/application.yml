@@ -1,0 +1,15 @@
+server:
+  port: 8080
+
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/parking_system?useSSL=false&serverTimezone=UTC&characterEncoding=UTF-8
+    username: root
+    password: 4499
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+mybatis:
+  mapper-locations: classpath:mapper/*.xml
+  type-aliases-package: com.pust.parking.entity
+  configuration:
+    map-underscore-to-camel-case: true

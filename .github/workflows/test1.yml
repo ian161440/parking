@@ -1,0 +1,28 @@
+name: test1
+
+on:
+  push:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  hello-world:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 拉取代码
+        uses: actions/checkout@v4
+
+      - name: 打印项目信息
+        run: |
+         echo "==停车场管理系统=="
+         echo "包含技术：Vue,Java,Python"
+         echo "当前目录内容："
+         ls -la
+
+      - name:显示代码文件列表
+        run: |
+          echo "项目文件结构："
+          find . -type f \( -name "*.vue" -o -name "*.java" -o -name "*.py" \) | head -20
+         
+       

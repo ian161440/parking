@@ -20,7 +20,7 @@ jobs:
          echo "当前目录内容："
          ls -la
 
-      - name:显示代码文件列表
+      - name: 显示代码文件列表
         run: |
           echo "项目文件结构："
           find . -type f \( -name "*.vue" -o -name "*.java" -o -name "*.py" \) | head -20
